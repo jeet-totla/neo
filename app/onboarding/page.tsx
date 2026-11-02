@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@/lib/supabase";
 import { Logo } from "@/components/Logo";
 import { IconArrowRight } from "@/components/Icons";
+import { ApiKeyField } from "@/components/ApiKeyField";
+import type { ProviderId } from "@/lib/providers";
 
 // ─── Topics ───────────────────────────────────────────────────────────────────
 
@@ -347,6 +349,7 @@ export default function OnboardingPage() {
 
   const [deliveryEmail, setDeliveryEmail] = useState("");
   const [apiKey, setApiKey]               = useState("");
+  const [keyProvider, setKeyProvider]     = useState<ProviderId>("gemini");
   const [deliveryTime] = useState("07:00");
   const [briefingStyle, setBriefingStyle] = useState<BriefingStyle>("analyst");
   const [expertiseLevel, setExpertiseLevel] = useState<"expert" | "beginner">("expert");
@@ -401,7 +404,7 @@ export default function OnboardingPage() {
 
   async function handleComplete() {
     if (!lens.trim()) { setError("Fill in a bit about yourself so Neo can personalise your briefing."); return; }
-    if (!apiKey.trim()) { setError("Add your Anthropic API key so Neo can write your briefings."); return; }
+    if (!apiKey.trim()) { setError("Add an AI API key so Neo can write your briefings."); return; }
     setLoading(true);
     setError(null);
     try {
@@ -445,14 +448,14 @@ export default function OnboardingPage() {
         throw new Error(err.message ?? "Database save failed");
       }
 
-      // Verify, encrypt and store the user's own Anthropic key (server side)
-      const keyRes = await fetch("/api/anthropic-key", {
+      // Verify, encrypt and store the user's own AI key (server side)
+      const keyRes = await fetch("/api/api-key", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key: apiKey.trim() }),
+        body: JSON.stringify({ key: apiKey.trim(), provider: keyProvider }),
       });
       if (!keyRes.ok) {
         const j = await keyRes.json().catch(() => ({}));
-        throw new Error(j.error ?? "Couldn't save your Anthropic key.");
+        throw new Error(j.error ?? "Couldn't save your API key.");
       }
 
       setStep(4);
@@ -896,18 +899,10 @@ export default function OnboardingPage() {
                   </div>
                 </div>
 
-                {/* Anthropic key */}
+                {/* AI key */}
                 <div className="mt-6">
-                  <label htmlFor="anthropic-key" className="block text-[13px] font-medium text-ink mb-1">Your Anthropic API key</label>
-                  <p className="text-[12px] leading-[18px] text-body mb-2">
-                    Neo writes your briefings with your own key, so you pay Anthropic directly, usually a few cents per briefing.
-                    Create one at{" "}
-                    <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">console.anthropic.com</a>.
-                    It is verified, then stored encrypted and never shown again.
-                  </p>
-                  <input id="anthropic-key" type="password" autoComplete="off" value={apiKey} onChange={e => setApiKey(e.target.value)}
-                    placeholder="sk-ant-..."
-                    className="w-full h-10 px-3.5 rounded-control border border-ink/10 font-mono text-[13px] bg-card focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/30 transition-all" />
+                  <p className="block text-[13px] font-medium text-ink mb-2">Your AI API key</p>
+                  <ApiKeyField id="onboarding-key" provider={keyProvider} onProvider={setKeyProvider} value={apiKey} onValue={setApiKey} />
                 </div>
 
                 {/* Delivery email (quiet) */}

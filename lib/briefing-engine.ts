@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { complete, type ProviderId } from "@/lib/providers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { XMLParser } from "fast-xml-parser";
 import { sendBriefingEmail } from "@/lib/mailer";
@@ -579,7 +579,6 @@ function timeAgo(isoStr?: string): string {
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-export const BRIEFING_MODEL = "claude-sonnet-4-6";
 
 export interface GenerateResult {
   briefing:    { id: string; content: string; created_at: string } & Record<string, unknown>;
@@ -604,7 +603,7 @@ export class NoStoriesError extends Error {
  * and email it. Designed to finish inside one 60s serverless invocation.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function generateBriefingForUser(supabase: SupabaseClient, profile: any, depth: Depth, apiKey: string): Promise<GenerateResult> {
+export async function generateBriefingForUser(supabase: SupabaseClient, profile: any, depth: Depth, llm: { provider: ProviderId; key: string }): Promise<GenerateResult> {
   const userId = profile.id as string;
   const topics:            string[] = profile.topics ?? [];
   const publications:      string[] = profile.sources?.publications ?? [];
@@ -669,11 +668,8 @@ export async function generateBriefingForUser(supabase: SupabaseClient, profile:
     return lines.join("\n");
   }).join("\n\n");
 
-  const anthropic = new Anthropic({ apiKey, timeout: 42_000, maxRetries: 0 });
-  const msg = await anthropic.messages.create({
-    model:       BRIEFING_MODEL,
-    max_tokens:  2400,
-    temperature: 0.7,
+  const content = await complete({
+    provider: llm.provider, apiKey: llm.key,
     system: `You are Neo — a personal intelligence analyst who knows this person better than any algorithm. You write like the smartest person in the room who also happens to care deeply about the reader.
 
 Writing style: ${styleInstruction}
@@ -695,9 +691,7 @@ Rules:
   Never write about a story without this attribution line. No exceptions.
 
 Depth instruction for this request: ${cfg.instruction}`,
-    messages: [{
-      role: "user",
-      content: `Who I am: ${profile.lens}
+    user: `Who I am: ${profile.lens}
 
 Topics I care about: ${topics.join(", ")}
 
@@ -705,10 +699,7 @@ Today's stories (all from the last 24 hours):
 ${storyList}
 
 Write my Neo briefing now.`,
-    }],
   });
-
-  const content = msg.content[0]?.type === "text" ? msg.content[0].text : "";
   if (!content.trim()) throw new Error("The briefing came back empty — please try again.");
 
   const sources_used = selected.map(s => ({ name: s.source, url: s.url, type: s.type, published_at: s.published_at ?? null }));

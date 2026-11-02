@@ -71,7 +71,7 @@ create policy "briefings: read own"   on public.briefings for select using (auth
 create policy "briefings: insert own" on public.briefings for insert with check (auth.uid() = user_id);
 create policy "briefings: update own" on public.briefings for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- Each user's own Anthropic key, encrypted by the app before it is stored.
+-- Each user's own AI key (Anthropic, OpenAI or Gemini; see the provider column), encrypted by the app before it is stored.
 -- Row level security is on with no policies, so only the server (service role) can read it.
 create table if not exists public.user_secrets (
   user_id             uuid primary key references auth.users(id) on delete cascade,
@@ -79,4 +79,5 @@ create table if not exists public.user_secrets (
   anthropic_key_last4 text,
   updated_at          timestamptz default now()
 );
+alter table public.user_secrets add column if not exists provider text not null default 'anthropic';
 alter table public.user_secrets enable row level security;

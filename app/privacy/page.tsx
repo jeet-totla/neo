@@ -12,11 +12,11 @@ export default function PrivacyPage() {
       </section>
       <section>
         <h2>How it is used</h2>
-        <p>Only to write and deliver your briefings. Your topics, sources and description are sent to Anthropic&apos;s Claude API along with public news stories so the briefing can be written for you. We do not sell your data or use it for advertising.</p>
+        <p>Only to write and deliver your briefings. Your topics, sources and description are sent to the AI provider you chose (Google Gemini, OpenAI or Anthropic) along with public news stories so the briefing can be written for you. We do not sell your data or use it for advertising.</p>
       </section>
       <section>
         <h2>Who processes it</h2>
-        <p>Supabase (database and sign-in), Vercel (hosting), Anthropic (writing the briefing) and Google (sending the email through Gmail). Each handles data under its own terms.</p>
+        <p>Supabase (database and sign-in), Vercel (hosting), your chosen AI provider (writing the briefing) and Google (sending the email through Gmail). Each handles data under its own terms.</p>
       </section>
       <section>
         <h2>Your choices</h2>

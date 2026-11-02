@@ -8,6 +8,8 @@ import {
   IconNewspaper, IconMic, IconVideo, IconHistory, IconSettings, IconLogOut, IconRefresh,
   IconCopy, IconCheck, IconArrowRight, IconExternal, IconPlus, IconX, IconClock,
 } from "@/components/Icons";
+import { ApiKeyField } from "@/components/ApiKeyField";
+import { PROVIDERS, type ProviderId } from "@/lib/providers";
 import { TOPICS, PUBLICATIONS, PODCASTS } from "@/lib/catalog";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -28,7 +30,7 @@ interface Briefing { id: string; content: string; created_at: string; articles_u
 interface Props {
   userEmail: string; profile: Profile | null;
   pastBriefings: Briefing[]; latestBriefing: Briefing | null;
-  keyLast4: string | null;
+  keyStatus: KeyStatus | null;
 }
 
 const DEPTHS: { key: Depth; label: string; hint: string }[] = [
@@ -254,7 +256,9 @@ function SettingsCard({ title, hint, onSave, saving, saved, children }: {
   );
 }
 
-function Settings({ profile, onProfile, keyLast4, onKey }: { profile: Profile; onProfile: (p: Profile) => void; keyLast4: string | null; onKey: (last4: string | null) => void }) {
+type KeyStatus = { provider: ProviderId; last4: string };
+
+function Settings({ profile, onProfile, keyStatus, onKey }: { profile: Profile; onProfile: (p: Profile) => void; keyStatus: KeyStatus | null; onKey: (k: KeyStatus | null) => void }) {
   const [topics, setTopics] = useState<string[]>(profile.topics ?? []);
   const [pubs, setPubs]     = useState<string[]>(profile.sources?.publications ?? []);
   const [pods, setPods]     = useState<string[]>(profile.sources?.podcasts ?? []);
@@ -268,23 +272,24 @@ function Settings({ profile, onProfile, keyLast4, onKey }: { profile: Profile; o
   const [saved, setSaved]   = useState<string | null>(null);
   const [error, setError]   = useState<string | null>(null);
   const [keyInput, setKeyInput] = useState("");
+  const [keyProvider, setKeyProvider] = useState<ProviderId>(keyStatus?.provider ?? "gemini");
   const [keyBusy, setKeyBusy]   = useState(false);
   const [keyMsg, setKeyMsg]     = useState<{ ok: boolean; text: string } | null>(null);
 
   async function saveKey() {
     setKeyBusy(true); setKeyMsg(null);
     try {
-      const res = await fetch("/api/anthropic-key", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: keyInput }) });
+      const res = await fetch("/api/api-key", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: keyInput, provider: keyProvider }) });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error ?? "Couldn't save the key.");
-      onKey(json.last4); setKeyInput(""); setKeyMsg({ ok: true, text: "Key saved." });
+      onKey({ provider: json.provider, last4: json.last4 }); setKeyInput(""); setKeyMsg({ ok: true, text: "Key saved." });
     } catch (e) { setKeyMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't save the key." }); }
     finally { setKeyBusy(false); }
   }
   async function removeKey() {
     setKeyBusy(true); setKeyMsg(null);
     try {
-      const res = await fetch("/api/anthropic-key", { method: "DELETE" });
+      const res = await fetch("/api/api-key", { method: "DELETE" });
       if (!res.ok) throw new Error("Couldn't remove the key.");
       onKey(null); setKeyMsg({ ok: true, text: "Key removed." });
     } catch (e) { setKeyMsg({ ok: false, text: e instanceof Error ? e.message : "Couldn't remove the key." }); }
@@ -327,19 +332,16 @@ function Settings({ profile, onProfile, keyLast4, onKey }: { profile: Profile; o
       {error && <p role="alert" className="rounded-control border border-bad/20 bg-bad/[0.05] px-3.5 py-2.5 text-[13px] text-bad">{error}</p>}
 
       <section className="surface rounded-card p-5 sm:p-6">
-        <h2 className="text-[16px] font-medium leading-[24px]">Anthropic API key</h2>
+        <h2 className="text-[16px] font-medium leading-[24px]">AI provider key</h2>
         <p className="text-[13px] leading-[20px] text-body mb-4">
-          Neo writes your briefings with your own key, so you pay Anthropic directly (usually a few cents per briefing).
-          Get one at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink">console.anthropic.com</a>.
-          It is verified, encrypted and never shown again.
+          Neo writes your briefings with your own key, so the AI cost is yours. Pick the provider you already use.
         </p>
-        {keyLast4 && <p className="dateline mb-3">Current key ends in {keyLast4}</p>}
-        <div className="flex gap-2">
-          <input type="password" autoComplete="off" value={keyInput} onChange={e => setKeyInput(e.target.value)}
-            placeholder={keyLast4 ? "Paste a new key to replace it" : "sk-ant-..."} className="field font-mono !text-[13px]" />
-          <button type="button" onClick={saveKey} disabled={keyBusy || !keyInput.trim()} className="btn-primary flex-shrink-0">{keyBusy ? "Checking" : "Save key"}</button>
+        {keyStatus && <p className="dateline mb-3">Using {PROVIDERS[keyStatus.provider].label}, key ending in {keyStatus.last4}</p>}
+        <ApiKeyField id="settings-key" provider={keyProvider} onProvider={setKeyProvider} value={keyInput} onValue={setKeyInput} />
+        <div className="mt-3 flex items-center gap-4">
+          <button type="button" onClick={saveKey} disabled={keyBusy || !keyInput.trim()} className="btn-primary">{keyBusy ? "Checking" : keyStatus ? "Replace key" : "Save key"}</button>
+          {keyStatus && <button type="button" onClick={removeKey} disabled={keyBusy} className="text-[13px] text-body hover:text-ink underline underline-offset-2 transition-colors duration-150">Remove key</button>}
         </div>
-        {keyLast4 && <button type="button" onClick={removeKey} disabled={keyBusy} className="mt-3 text-[13px] text-body hover:text-ink underline underline-offset-2 transition-colors duration-150">Remove key</button>}
         {keyMsg && <p role="status" className={`mt-3 text-[13px] ${keyMsg.ok ? "text-good" : "text-bad"}`}>{keyMsg.text}</p>}
       </section>
 
@@ -413,7 +415,7 @@ function Settings({ profile, onProfile, keyLast4, onKey }: { profile: Profile; o
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export function DashboardClient({ userEmail, profile: init, latestBriefing, pastBriefings, keyLast4: initKey }: Props) {
+export function DashboardClient({ userEmail, profile: init, latestBriefing, pastBriefings, keyStatus: initKey }: Props) {
   const router = useRouter();
   const [view, setView]             = useState<View>("today");
   const [depth, setDepth]           = useState<Depth>("read");
@@ -421,7 +423,7 @@ export function DashboardClient({ userEmail, profile: init, latestBriefing, past
   const [error, setError]           = useState<string | null>(null);
   const [notice, setNotice]         = useState<string | null>(null);
   const [profile, setProfile]       = useState<Profile | null>(init);
-  const [keyLast4, setKeyLast4]     = useState<string | null>(initKey);
+  const [keyStatus, setKeyStatus]   = useState<KeyStatus | null>(initKey);
   const [current, setCurrent]       = useState<Briefing | null>(latestBriefing);
   const [history, setHistory]       = useState<Briefing[]>(latestBriefing ? [latestBriefing, ...pastBriefings] : pastBriefings);
   const topRef = useRef<HTMLDivElement>(null);
@@ -510,15 +512,15 @@ export function DashboardClient({ userEmail, profile: init, latestBriefing, past
                     </button>
                   ))}
                 </div>
-                <button onClick={generate} disabled={generating || !keyLast4} className="btn-primary">
+                <button onClick={generate} disabled={generating || !keyStatus} className="btn-primary">
                   <IconRefresh /> {current ? "Generate a new briefing" : "Generate your first briefing"}
                 </button>
               </div>
 
-              {!keyLast4 && (
+              {!keyStatus && (
                 <div className="mb-6 rounded-card border border-accent/25 bg-accent-soft p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-[14px] leading-[22px] text-ink max-w-[34rem]">
-                    Add your Anthropic API key to start generating briefings. Neo uses your key, so you pay Anthropic directly.
+                    Add an AI API key in Settings to start generating briefings. Gemini has a free tier.
                   </p>
                   <button onClick={() => setView("settings")} className="btn-primary btn-sm">Add key</button>
                 </div>
@@ -571,7 +573,7 @@ export function DashboardClient({ userEmail, profile: init, latestBriefing, past
           {view === "settings" && profile && (
             <div className="rise">
               <h1 className="font-display text-[36px] sm:text-[44px] leading-[1.08] tracking-[-0.02em] mb-8">Settings</h1>
-              <Settings profile={profile} onProfile={setProfile} keyLast4={keyLast4} onKey={setKeyLast4} />
+              <Settings profile={profile} onProfile={setProfile} keyStatus={keyStatus} onKey={setKeyStatus} />
             </div>
           )}
         </div>

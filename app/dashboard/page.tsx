@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getKeyStatus } from "@/lib/anthropic-key";
+import { getKeyStatus } from "@/lib/user-key";
 import { DashboardClient } from "./DashboardClient";
 
 export default async function DashboardPage() {
@@ -24,8 +24,8 @@ export default async function DashboardPage() {
   if (!profile) redirect("/onboarding");
 
   // Only whether a key exists and its last four characters ever reach the browser
-  let keyLast4: string | null = null;
-  try { keyLast4 = await getKeyStatus(createAdminClient(), user.id); } catch { /* table not created yet */ }
+  let keyStatus: Awaited<ReturnType<typeof getKeyStatus>> = null;
+  try { keyStatus = await getKeyStatus(createAdminClient(), user.id); } catch { /* table not created yet */ }
 
   const all      = briefings ?? [];
   const latest   = all[0] ?? null;
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
       profile={profile}
       latestBriefing={latest}
       pastBriefings={pastOnly}
-      keyLast4={keyLast4}
+      keyStatus={keyStatus}
     />
   );
 }

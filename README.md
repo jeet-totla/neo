@@ -44,12 +44,12 @@ The dashboard calls the same `/api/generate-briefing` endpoint, so a manual brie
 | App | Next.js 14 (App Router), TypeScript |
 | Styling | Tailwind CSS, hand-written design tokens |
 | Auth and database | Supabase (Postgres, Auth, row level security) |
-| AI | Anthropic Claude (Sonnet), using each user's own API key |
+| AI | Google Gemini, OpenAI or Anthropic, using each user's own API key |
 | Email | Gmail SMTP through Nodemailer |
 | Hosting and scheduling | Vercel (Hobby plan is enough) |
 | Runtime and package manager | Bun |
 
-Everything runs on free tiers. Each user brings their own Anthropic API key, so the AI cost is theirs (usually a few cents per briefing).
+Everything runs on free tiers. Each user brings their own AI key (Gemini has a free tier; OpenAI and Anthropic are paid), so the AI cost is theirs.
 
 ## Getting started
 
@@ -77,7 +77,7 @@ cp .env.example .env.local
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same page. Server only, never exposed to the browser |
-| `ENCRYPTION_KEY` | Any long random string, for example `openssl rand -hex 32`. Encrypts the Anthropic keys users add. Keep it safe: if it changes, saved keys can no longer be read |
+| `ENCRYPTION_KEY` | Any long random string, for example `openssl rand -hex 32`. Encrypts the AI keys users add. Keep it safe: if it changes, saved keys can no longer be read |
 | `GMAIL_USER`, `GMAIL_APP_PASSWORD` | A Gmail account with 2-step verification on, then Google Account → Security → App passwords |
 | `CRON_SECRET` | Any random string, for example `openssl rand -hex 32` |
 | `NEWSAPI_KEY` | Optional. Extra coverage from [newsapi.org](https://newsapi.org) |
@@ -122,7 +122,7 @@ supabase/schema.sql         Database schema and row level security
 
 ## Limits and design decisions
 
-- **Bring your own key.** Users add an Anthropic API key in onboarding. It is verified, encrypted with AES-256-GCM and stored in a table that only the server can read. The browser only ever learns the last four characters.
+- **Bring your own key.** Users add a Gemini, OpenAI or Anthropic API key in onboarding. It is verified, encrypted with AES-256-GCM and stored in a table that only the server can read. The browser only ever learns the last four characters.
 - **Cost control.** Each account can generate five briefings per rolling 24 hours, and the cron skips anyone who already received one recently.
 - **Scale.** One cron run starts up to 25 briefings. That keeps a run inside Vercel's time limit and Gmail's daily sending cap (about 500 messages). Past a few hundred users, move email to a transactional provider and raise the batch size.
 - **One delivery time.** The Hobby plan allows one cron per day, so every briefing goes out at the same time (11:00 UTC) rather than at a time you choose.

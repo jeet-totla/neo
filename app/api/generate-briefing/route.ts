@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PROVIDERS } from "@/lib/providers";
 import { generateBriefingForUser, NoStoriesError, type Depth } from "@/lib/briefing-engine";
-import { getUserApiKey } from "@/lib/anthropic-key";
+import { getUserApiKey } from "@/lib/user-key";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ const DAILY_LIMIT = 5;
 const CRON_WINDOW_HOURS = 18;
 
 export async function POST(request: Request) {
+  let userLabel = "AI provider";
   try {
     const body = await request.json().catch(() => ({}));
     const secret = process.env.CRON_SECRET;
@@ -60,16 +62,17 @@ export async function POST(request: Request) {
     }
 
     // Briefings are written with the user's own Anthropic key
-    const apiKey = await getUserApiKey(createAdminClient(), userId);
-    if (!apiKey) {
+    const llm = await getUserApiKey(createAdminClient(), userId);
+    if (!llm) {
       return NextResponse.json(
-        { error: "Add your Anthropic API key in Settings to generate briefings.", code: "NO_KEY" },
+        { error: "Add your AI API key in Settings to generate briefings.", code: "NO_KEY" },
         { status: 400 }
       );
     }
 
+    userLabel = PROVIDERS[llm.provider].label;
     const depth: Depth = ["scan", "read", "deep"].includes(body.depth_mode) ? body.depth_mode : "read";
-    const result = await generateBriefingForUser(db as never, profile, depth, apiKey);
+    const result = await generateBriefingForUser(db as never, profile, depth, llm);
 
     return NextResponse.json({
       briefing: result.briefing,
@@ -81,9 +84,10 @@ export async function POST(request: Request) {
     const upstream = (e as { status?: number })?.status;
     let message = e instanceof Error ? e.message : "Generation failed";
     let status = e instanceof NoStoriesError ? 404 : 500;
-    if (upstream === 401) { message = "Anthropic rejected your API key. Update it in Settings."; status = 400; }
-    else if (upstream === 429) { message = "Your Anthropic account is rate limited right now. Try again in a minute."; status = 429; }
-    else if (upstream === 400 && /credit/i.test(message)) { message = "Your Anthropic account is out of credit. Add credit at console.anthropic.com."; status = 400; }
+    const label = userLabel;
+    if (upstream === 401 || upstream === 403) { message = `${label} rejected your API key. Update it in Settings.`; status = 400; }
+    else if (upstream === 429) { message = `Your ${label} account is rate limited or out of quota right now. Try again in a minute, or check your plan.`; status = 429; }
+    else if (upstream === 400 && /credit|billing|quota/i.test(message)) { message = `Your ${label} account is out of credit. Add credit with ${label}.`; status = 400; }
     return NextResponse.json({ error: message }, { status });
   }
 }

@@ -3,7 +3,7 @@ import { Instrument_Sans, Instrument_Serif, IBM_Plex_Mono } from "next/font/goog
 import "./globals.css";
 
 const sans    = Instrument_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const display = Instrument_Serif({ subsets: ["latin"], weight: "400", variable: "--font-display", display: "swap" });
+const display = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-display", display: "swap" });
 const mono    = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {

@@ -1,12 +1,14 @@
 import Link from "next/link";
 
-/** The Neo mark: an ember tile with an N whose diagonal runs up into a single point, many sources into one briefing. */
+/** The Neo mark: three lines from many sources converge through a lens onto one point. */
 export function LogoMark({ size = 24 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden>
-      <rect width="64" height="64" rx="16" fill="#ff6a2c" />
-      <path d="M20 46V18l24 28V18" stroke="#0a0a0b" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="44" cy="18" r="3.4" fill="#0a0a0b" />
+      <rect width="64" height="64" rx="16" fill="#0a0a0b"/>
+      <rect x=".5" y=".5" width="63" height="63" rx="15.5" stroke="#f4f1ea" strokeOpacity=".14"/>
+      <circle cx="34" cy="32" r="19" stroke="#ff6a2c" strokeWidth="3.5"/>
+      <path d="M6 20c14 0 17 6 22 12M6 32h22M6 44c14 0 17-6 22-12" stroke="#f4f1ea" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="36" cy="32" r="6.5" fill="#ff6a2c"/>
     </svg>
   );
 }

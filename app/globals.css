@@ -95,3 +95,7 @@
   .marquee, .blob, .animate-ping-slow, .animate-caret { animation: none; }
   .bar { transform: none; transition: none; }
 }
+
+@keyframes flow { from { stroke-dashoffset: 40; } to { stroke-dashoffset: 0; } }
+.flow-dash { stroke-dasharray: 3 37; animation: flow 1.8s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .flow-dash { animation: none; } }

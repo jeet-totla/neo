@@ -6,6 +6,7 @@ import {
 import { Reveal } from "@/components/landing/Reveal";
 import { CountUp } from "@/components/landing/CountUp";
 import { LensDemo } from "@/components/landing/LensDemo";
+import { Converge } from "@/components/landing/Converge";
 import { BrandMark } from "@/components/landing/BrandMark";
 import { TOPICS, PUBLICATIONS as PUB_CATALOG, PODCASTS as POD_CATALOG } from "@/lib/catalog";
 import { PROVIDERS, PROVIDER_ORDER } from "@/lib/providers";
@@ -112,23 +113,25 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative">
         <HeroBackdrop />
-        <div className="relative max-w-[1120px] mx-auto px-5 sm:px-6 pt-16 sm:pt-24 pb-16">
-          <div className="max-w-[860px] mx-auto text-center">
-            <p className="rise mx-auto inline-flex items-center gap-2 rounded-full border border-ink/10 bg-card/70 px-3.5 py-1.5 text-[13px] text-body" style={{ ["--d" as string]: "0ms" }}>
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Personal market intelligence
-            </p>
-            <h1 className="rise mt-6 font-display font-normal text-[40px] sm:text-[84px] leading-[1.0] tracking-[-0.035em] text-ink" style={{ ["--d" as string]: "70ms" }}>
-              Everything you follow,<br />
-              in <em className="italic text-accent">one briefing</em> about you
-            </h1>
-            <p className="rise mt-7 mx-auto text-[18px] sm:text-[20px] leading-[30px] text-body max-w-[640px]" style={{ ["--d" as string]: "140ms" }}>
-              Neo combines your news, newsletters, podcasts and feeds into a single morning briefing, then writes it through your own lens: your role, your market and your goals.
-            </p>
-            <div className="rise mt-9 flex flex-wrap items-center justify-center gap-3" style={{ ["--d" as string]: "210ms" }}>
-              <Link href="/signup" className="btn-primary h-12 px-7 rounded-full text-[15px]">Get started <IconArrowRight /></Link>
-              <a href="#how" className="btn-secondary h-12 px-7 rounded-full text-[15px]">See how it works</a>
+        <div className="relative max-w-[1120px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-16">
+          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-6 items-center">
+            <div>
+              <p className="rise inline-flex items-center gap-2 rounded-full border border-ink/10 bg-card/70 px-3.5 py-1.5 text-[13px] text-body" style={{ ["--d" as string]: "0ms" }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Personal market intelligence
+              </p>
+              <h1 className="rise mt-6 font-display font-normal text-[44px] sm:text-[72px] leading-[1.0] tracking-[-0.035em] text-ink" style={{ ["--d" as string]: "70ms" }}>
+                Everything you follow, in <em className="italic text-accent">one briefing</em> about you
+              </h1>
+              <p className="rise mt-6 text-[18px] leading-[28px] text-body max-w-[520px]" style={{ ["--d" as string]: "140ms" }}>
+                Neo combines your news, newsletters, podcasts and feeds into a single morning briefing, then writes it through your own lens: your role, your market and your goals.
+              </p>
+              <div className="rise mt-8 flex flex-wrap items-center gap-3" style={{ ["--d" as string]: "210ms" }}>
+                <Link href="/signup" className="btn-primary h-12 px-7 rounded-full text-[15px]">Get started <IconArrowRight /></Link>
+                <a href="#how" className="btn-secondary h-12 px-7 rounded-full text-[15px]">See how it works</a>
+              </div>
+              <p className="rise mt-4 text-[13px] text-muted" style={{ ["--d" as string]: "260ms" }}>Takes two minutes. Bring a Gemini, OpenAI or Anthropic key. Gemini&apos;s is free.</p>
             </div>
-            <p className="rise mt-4 text-[13px] text-muted" style={{ ["--d" as string]: "260ms" }}>Takes two minutes. Bring a Gemini, OpenAI or Anthropic key. Gemini&apos;s is free.</p>
+            <Converge />
           </div>
 
           <div className="rise mt-14 sm:mt-20" style={{ ["--d" as string]: "320ms" }}>

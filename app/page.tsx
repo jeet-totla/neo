@@ -6,6 +6,7 @@ import {
 import { Reveal } from "@/components/landing/Reveal";
 import { CountUp } from "@/components/landing/CountUp";
 import { LensDemo } from "@/components/landing/LensDemo";
+import { BrandMark } from "@/components/landing/BrandMark";
 import { TOPICS, PUBLICATIONS as PUB_CATALOG, PODCASTS as POD_CATALOG } from "@/lib/catalog";
 import { PROVIDERS, PROVIDER_ORDER } from "@/lib/providers";
 
@@ -18,8 +19,18 @@ const GMAIL_COMPOSE =
   `&su=${encodeURIComponent("Market intelligence system for our company")}` +
   `&body=${encodeURIComponent("Hi Jeet,\n\nWe'd like a market intelligence system for our team.\n\nCompany:\nWhat we want to track:\nWho should receive it:\n\n")}`;
 
-const TICKER_A = ["Bloomberg", "Financial Times", "TechCrunch", "The Verge", "Axios", "Semafor", "The Economist", "Wired", "Rest of World", "TechCabal", "MIT Tech Review", "Forbes"];
-const TICKER_B = ["All-In", "Acquired", "20VC", "My First Million", "Invest Like the Best", "Bankless", "Hacker News", "r/startups", "Any Substack", "Any YouTube channel", "Product Hunt", "GDELT"];
+type Brand = [name: string, domain: string];
+const PUBS: Brand[] = [
+  ["Bloomberg", "bloomberg.com"], ["Financial Times", "ft.com"], ["TechCrunch", "techcrunch.com"], ["The Verge", "theverge.com"],
+  ["Axios", "axios.com"], ["Semafor", "semafor.com"], ["The Economist", "economist.com"], ["Wired", "wired.com"],
+  ["Rest of World", "restofworld.org"], ["TechCabal", "techcabal.com"], ["Forbes", "forbes.com"], ["WSJ", "wsj.com"],
+];
+const SHOWS: Brand[] = [
+  ["All-In", "allin.com"], ["Acquired", "acquired.fm"], ["20VC", "thetwentyminutevc.com"], ["My First Million", "mfmpod.com"],
+  ["Invest Like the Best", "joincolossus.com"], ["Bankless", "bankless.com"], ["YouTube", "youtube.com"], ["Substack", "substack.com"],
+  ["Hacker News", "news.ycombinator.com"], ["Reddit", "reddit.com"], ["Product Hunt", "producthunt.com"], ["X", "x.com"],
+];
+const X_HANDLES = ["@paulg", "@naval", "@benedictevans", "@packyM", "@sama", "@lennysan"];
 
 const STEPS = [
   { icon: IconNewspaper, title: "Choose what you follow", body: "Topics first, then the publications, newsletters, podcasts and channels you already read. About two minutes." },
@@ -43,41 +54,27 @@ const FAQ = [
 
 // ── Decorative backgrounds ────────────────────────────────────────────────────
 
-/** Soft organic blobs in warm tones, in the spirit of Haikei backgrounds. */
-function HeroBlobs() {
+/** Dot grid and ember glows on black. */
+function HeroBackdrop() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[1000px] overflow-hidden [mask-image:linear-gradient(#000_60%,transparent)]">
-      <svg className="blob absolute -top-40 -left-40 w-[760px] h-[760px] opacity-80" viewBox="0 0 600 600">
-        <defs><filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="60" /></filter></defs>
-        <path filter="url(#b1)" fill="#f6cdb3" d="M421 112c64 48 99 130 79 202s-96 133-176 156-163 8-199-52-26-152 29-221S357 64 421 112Z" />
-      </svg>
-      <svg className="blob blob-slow absolute -top-24 right-[-200px] w-[720px] h-[720px] opacity-70" viewBox="0 0 600 600">
-        <defs><filter id="b2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="70" /></filter></defs>
-        <path filter="url(#b2)" fill="#ecd9bd" d="M447 130c52 52 66 144 28 213s-128 115-206 111-142-62-165-134 4-157 63-209 228-33 280 19Z" />
-      </svg>
-      <svg className="blob absolute top-[420px] left-[30%] w-[520px] h-[520px] opacity-50" viewBox="0 0 600 600">
-        <defs><filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="80" /></filter></defs>
-        <path filter="url(#b3)" fill="#fbe3d3" d="M402 118c60 40 108 120 86 190s-112 130-190 142-146-34-170-102 4-152 62-196 152-74 212-34Z" />
-      </svg>
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[1100px] overflow-hidden [mask-image:linear-gradient(#000_55%,transparent)]">
+      <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(rgba(244,241,234,0.22)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,#000,transparent)]" />
+      <div className="blob absolute -top-56 left-1/2 -translate-x-1/2 h-[620px] w-[900px] rounded-full bg-[#ff6a2c]/25 blur-[140px]" />
+      <div className="blob blob-slow absolute top-40 -left-60 h-[460px] w-[460px] rounded-full bg-[#b4441a]/20 blur-[130px]" />
+      <div className="blob absolute top-60 -right-60 h-[420px] w-[420px] rounded-full bg-[#7a3b1e]/20 blur-[130px]" />
     </div>
   );
 }
 
-function Wave({ className = "", fill = "#1f1b16" }: { className?: string; fill?: string }) {
-  return (
-    <svg aria-hidden className={className} viewBox="0 0 1440 90" preserveAspectRatio="none">
-      <path fill={fill} d="M0 60c120-40 240-40 360-10s240 50 360 30 240-60 360-60 240 30 360 50v30H0Z" />
-    </svg>
-  );
-}
-
-function Ticker({ items, reverse = false }: { items: string[]; reverse?: boolean }) {
+function Ticker({ items, reverse = false }: { items: Brand[]; reverse?: boolean }) {
   const row = [...items, ...items];
   return (
-    <div className="marquee-wrap overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
+    <div className="marquee-wrap overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
       <div className={`marquee ${reverse ? "marquee-rev" : ""}`}>
-        {row.map((t, i) => (
-          <span key={i} className="flex-shrink-0 rounded-full border border-ink/10 bg-card/80 px-4 py-2 text-[14px] text-body">{t}</span>
+        {row.map(([name, domain], i) => (
+          <span key={i} className="flex-shrink-0 inline-flex items-center gap-3 rounded-full border border-ink/10 bg-card/80 pl-2 pr-5 py-2 text-[14px] text-ink">
+            <BrandMark domain={domain} name={name} />{name}
+          </span>
         ))}
       </div>
     </div>
@@ -114,7 +111,7 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative">
-        <HeroBlobs />
+        <HeroBackdrop />
         <div className="relative max-w-[1120px] mx-auto px-5 sm:px-6 pt-16 sm:pt-24 pb-16">
           <div className="max-w-[860px] mx-auto text-center">
             <p className="rise mx-auto inline-flex items-center gap-2 rounded-full border border-ink/10 bg-card/70 px-3.5 py-1.5 text-[13px] text-body" style={{ ["--d" as string]: "0ms" }}>
@@ -128,7 +125,7 @@ export default function HomePage() {
               Neo combines your news, newsletters, podcasts and feeds into a single morning briefing, then writes it through your own lens: your role, your market and your goals.
             </p>
             <div className="rise mt-9 flex flex-wrap items-center justify-center gap-3" style={{ ["--d" as string]: "210ms" }}>
-              <Link href="/signup" className="btn-primary h-12 px-7 rounded-full text-[15px]">Get started free <IconArrowRight /></Link>
+              <Link href="/signup" className="btn-primary h-12 px-7 rounded-full text-[15px]">Get started <IconArrowRight /></Link>
               <a href="#how" className="btn-secondary h-12 px-7 rounded-full text-[15px]">See how it works</a>
             </div>
             <p className="rise mt-4 text-[13px] text-muted" style={{ ["--d" as string]: "260ms" }}>Takes two minutes. Bring a Gemini, OpenAI or Anthropic key. Gemini&apos;s is free.</p>
@@ -140,11 +137,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Tickers */}
-      <section aria-label="Sources Neo reads" className="py-10 sm:py-14 space-y-3">
-        <p className="dateline text-center mb-6">Reads what you already read</p>
-        <Ticker items={TICKER_A} />
-        <Ticker items={TICKER_B} reverse />
+      {/* Logo wall */}
+      <section aria-label="Sources Neo reads" className="py-12 sm:py-16">
+        <p className="dateline text-center mb-8">Reads what you already read</p>
+        <div className="space-y-3">
+          <Ticker items={PUBS} />
+          <Ticker items={SHOWS} reverse />
+        </div>
+        <div className="mt-8 max-w-[1120px] mx-auto px-5 sm:px-6 flex flex-wrap items-center justify-center gap-2">
+          <span className="dateline mr-2">Track people on X</span>
+          {X_HANDLES.map(h => (
+            <span key={h} className="inline-flex items-center gap-2 rounded-full border border-ink/10 px-3 py-1.5 text-[13px] text-body">
+              <span className="grid place-items-center h-5 w-5 rounded-full bg-ink text-card text-[10px] font-semibold">{h[1].toUpperCase()}</span>{h}
+            </span>
+          ))}
+        </div>
       </section>
 
       {/* How it works */}
@@ -156,18 +163,18 @@ export default function HomePage() {
               Set it up once. <span className="text-muted">Read it every morning.</span>
             </h2>
           </Reveal>
-          <div className="mt-14 grid md:grid-cols-3 gap-4">
-            {STEPS.map((s, i) => (
-              <Reveal key={s.title} delay={i * 110}>
-                <div className="surface rounded-card p-6 h-full relative overflow-hidden group transition-transform duration-300 ease-neo hover:-translate-y-1">
-                  <span aria-hidden className="absolute -right-2 -top-6 font-display text-[120px] leading-none text-raised select-none">{i + 1}</span>
-                  <span className="relative h-10 w-10 rounded-control bg-accent-soft grid place-items-center text-accent mb-14"><s.icon size={18} /></span>
-                  <h3 className="relative text-[19px] font-medium leading-[26px] mb-2">{s.title}</h3>
-                  <p className="relative text-[14px] leading-[22px] text-body">{s.body}</p>
+          <ol className="mt-14 border-t border-ink/[0.1]">
+            {STEPS.map((st, i) => (
+              <Reveal as="li" key={st.title} delay={i * 90}>
+                <div className="group grid md:grid-cols-[80px_1fr_1.2fr_40px] gap-3 md:gap-8 items-center py-8 border-b border-ink/[0.1] transition-colors duration-300 hover:bg-card/60 px-2 -mx-2">
+                  <span className="dateline">0{i + 1}</span>
+                  <h3 className="font-display text-[30px] sm:text-[38px] leading-[1.05] tracking-[-0.02em]">{st.title}</h3>
+                  <p className="text-[15px] leading-[24px] text-body max-w-[34rem]">{st.body}</p>
+                  <span className="hidden md:grid h-9 w-9 place-items-center rounded-full border border-ink/10 text-body transition-[background-color,color,transform] duration-300 ease-neo group-hover:bg-accent group-hover:text-page group-hover:border-accent group-hover:-rotate-45"><st.icon size={16} /></span>
                 </div>
               </Reveal>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -288,15 +295,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Dark strip: the promise */}
-      <section className="relative bg-ink text-card">
-        <Wave className="absolute -top-px left-0 w-full h-[60px] sm:h-[90px] -translate-y-[calc(100%-1px)]" />
-        <div className="max-w-[1120px] mx-auto px-5 sm:px-6 py-20 sm:py-28 text-center">
+      {/* Promise */}
+      <section className="relative overflow-hidden border-y border-ink/[0.08]">
+        <div aria-hidden className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[420px] w-[820px] rounded-full bg-[#ff6a2c]/20 blur-[130px]" />
+        <div className="relative max-w-[1120px] mx-auto px-5 sm:px-6 py-24 sm:py-32 text-center">
           <Reveal>
-            <p className="font-display text-[34px] sm:text-[60px] leading-[1.08] tracking-[-0.03em] max-w-[900px] mx-auto">
-              News is written for everyone, so it isn&apos;t about <em className="italic text-[#f0a37a]">anyone</em>. Neo writes it about you.
+            <p className="font-display text-[36px] sm:text-[68px] leading-[1.04] tracking-[-0.03em] max-w-[960px] mx-auto">
+              News is written for everyone, so it isn&apos;t about <em className="italic text-accent">anyone</em>. Neo writes it about you.
             </p>
-            <div className="mt-10"><Link href="/signup" className="btn h-12 px-7 rounded-full bg-card text-ink hover:bg-raised">Build my briefing <IconArrowRight /></Link></div>
+            <div className="mt-10"><Link href="/signup" className="btn-primary h-12 px-7 rounded-full text-[15px]">Build my briefing <IconArrowRight /></Link></div>
           </Reveal>
         </div>
       </section>
@@ -329,7 +336,7 @@ export default function HomePage() {
         <div className="max-w-[1120px] mx-auto px-5 sm:px-6 pb-20 sm:pb-28">
           <Reveal>
             <div className="relative overflow-hidden rounded-panel border border-ink/[0.08] bg-card p-8 sm:p-14 grid lg:grid-cols-[7fr_5fr] gap-8 items-center">
-              <div aria-hidden className="absolute -right-24 -bottom-32 h-[360px] w-[360px] rounded-full bg-[#f6cdb3]/70 blur-3xl" />
+              <div aria-hidden className="absolute -right-24 -bottom-32 h-[360px] w-[360px] rounded-full bg-[#ff6a2c]/25 blur-3xl" />
               <div className="relative">
                 <p className="dateline mb-4">For teams</p>
                 <h2 className="font-display text-[34px] sm:text-[52px] leading-[1.04] tracking-[-0.03em]">

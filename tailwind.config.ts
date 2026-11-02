@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Neo design tokens. Warm paper neutrals, one ember accent.
+// Neo design tokens. Near-black surfaces, warm off-white ink, one ember accent.
 // See README → Design for the reasoning.
 const config: Config = {
   content: [
@@ -10,15 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        page:   "#f7f4ee",
-        card:   "#fdfbf7",
-        raised: "#efe9df",
-        ink:    "#1f1b16",
-        body:   "#5e554a",
-        muted:  "#7b7266",
-        accent: { DEFAULT: "#c2410c", soft: "#fbeee6" },
-        good:   "#16a34a",
-        bad:    "#dc2626",
+        page:   "#0a0a0b",
+        card:   "#131315",
+        raised: "#1c1c1f",
+        ink:    "#f4f1ea",
+        body:   "#a9a49b",
+        muted:  "#7a766e",
+        accent: { DEFAULT: "#ff6a2c", soft: "#2a1810" },
+        good:   "#4ade80",
+        bad:    "#f87171",
       },
       fontFamily: {
         sans:    ["var(--font-sans)", "system-ui", "sans-serif"],
@@ -27,8 +27,8 @@ const config: Config = {
       },
       borderRadius: { control: "10px", card: "16px", panel: "20px" },
       boxShadow: {
-        soft:  "0 1px 2px rgba(31,27,22,0.05)",
-        float: "0 8px 24px rgba(31,27,22,0.06)",
+        soft:  "0 1px 2px rgba(0,0,0,0.4)",
+        float: "0 8px 24px rgba(0,0,0,0.45)",
       },
       transitionTimingFunction: { neo: "cubic-bezier(0.22, 1, 0.36, 1)" },
     },

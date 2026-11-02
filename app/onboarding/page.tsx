@@ -497,7 +497,7 @@ export default function OnboardingPage() {
           </div>
           <div className="h-[2px] bg-neutral-200 rounded-full overflow-hidden">
             <div className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(step / 3) * 100}%`, background: "#1f1b16" }} />
+              style={{ width: `${(step / 3) * 100}%`, background: "#f4f1ea" }} />
           </div>
         </div>
 
@@ -530,7 +530,7 @@ export default function OnboardingPage() {
                         }`}
                         style={{
                           animation: `fadeInUp 0.4s ease both ${0.05 + i * 0.035}s`,
-                          ...(on ? { background: "#1f1b16" } : {}),
+                          ...(on ? { background: "#f4f1ea" } : {}),
                         }}>
                         {t}
                       </button>
@@ -616,7 +616,7 @@ export default function OnboardingPage() {
                                 ? "text-card border-transparent"
                                 : "bg-card text-body border-ink/10 hover:border-ink/30"
                             }`}
-                            style={on ? { background: "#1f1b16" } : {}}>
+                            style={on ? { background: "#f4f1ea" } : {}}>
                             {n.name}
                           </button>
                         );
@@ -629,7 +629,7 @@ export default function OnboardingPage() {
                       placeholder="https://newsletter.substack.com"
                       className="flex-1 h-10 px-3.5 rounded-control border border-ink/10 text-sm bg-raised focus:bg-card focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/30 transition-all" />
                     <button type="button" onClick={() => addSubstack()}
-                      className="h-10 px-4 bg-ink hover:bg-[#35302a] text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
+                      className="h-10 px-4 bg-ink hover:bg-white text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
                       Add
                     </button>
                   </div>
@@ -665,7 +665,7 @@ export default function OnboardingPage() {
                                 ? "text-card border-transparent"
                                 : "bg-card text-body border-ink/10 hover:border-ink/30"
                             }`}
-                            style={on ? { background: "#1f1b16" } : {}}>
+                            style={on ? { background: "#f4f1ea" } : {}}>
                             @{h}
                           </button>
                         );
@@ -678,7 +678,7 @@ export default function OnboardingPage() {
                       placeholder="@handle"
                       className="flex-1 h-10 px-3.5 rounded-control border border-ink/10 text-sm bg-raised focus:bg-card focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/30 transition-all" />
                     <button type="button" onClick={() => addXHandle()}
-                      className="h-10 px-4 bg-ink hover:bg-[#35302a] text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
+                      className="h-10 px-4 bg-ink hover:bg-white text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
                       Add
                     </button>
                   </div>
@@ -711,7 +711,7 @@ export default function OnboardingPage() {
                               ? "text-card border-transparent"
                               : "bg-card text-body border-ink/10 hover:border-ink/30"
                           }`}
-                          style={on ? { background: "#1f1b16" } : {}}>
+                          style={on ? { background: "#f4f1ea" } : {}}>
                           {p}
                         </button>
                       );
@@ -730,7 +730,7 @@ export default function OnboardingPage() {
                       placeholder="Channel URL or ID (e.g. UCBcRF18a7Qf58cCRy5xuWwQ)"
                       className="flex-1 h-10 px-3.5 rounded-control border border-ink/10 text-sm bg-raised focus:bg-card focus:outline-none focus:ring-2 focus:ring-ink/10 focus:border-ink/30 transition-all" />
                     <button type="button" onClick={addYouTube}
-                      className="h-10 px-4 bg-ink hover:bg-[#35302a] text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
+                      className="h-10 px-4 bg-ink hover:bg-white text-card text-sm font-medium rounded-control transition-colors flex-shrink-0">
                       Add
                     </button>
                   </div>
@@ -765,7 +765,7 @@ export default function OnboardingPage() {
                               ? "text-card border-transparent"
                               : "bg-card text-body border-ink/10 hover:border-ink/30"
                           }`}
-                          style={on ? { background: "#1f1b16" } : {}}>
+                          style={on ? { background: "#f4f1ea" } : {}}>
                           r/{sub}
                         </button>
                       );
@@ -891,7 +891,7 @@ export default function OnboardingPage() {
                               ? "text-card border-transparent"
                               : "bg-card text-body border-ink/10 hover:border-ink/20"
                           }`}
-                          style={expertiseLevel === lvl ? { background: "#1f1b16" } : {}}>
+                          style={expertiseLevel === lvl ? { background: "#f4f1ea" } : {}}>
                           {lvl === "expert" ? "Expert — use jargon freely" : "Beginner — explain terms"}
                         </button>
                       ))}
@@ -940,13 +940,13 @@ export default function OnboardingPage() {
               {step < 3 ? (
                 <button type="button" onClick={advance}
                   className="h-10 px-6 text-card text-sm font-medium rounded-control transition-all hover:opacity-90"
-                  style={{ background: "#1f1b16" }}>
+                  style={{ background: "#f4f1ea" }}>
                   Continue
                 </button>
               ) : (
                 <button type="button" onClick={handleComplete} disabled={loading}
                   className="h-10 px-6 text-card text-sm font-medium rounded-control transition-all hover:opacity-90 disabled:opacity-50"
-                  style={{ background: "#1f1b16" }}>
+                  style={{ background: "#f4f1ea" }}>
                   {loading ? "Saving…" : "Complete setup"}
                 </button>
               )}

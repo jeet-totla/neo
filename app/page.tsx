@@ -116,9 +116,10 @@ export default function HomePage() {
         <div className="relative max-w-[1120px] mx-auto px-5 sm:px-6 pt-14 sm:pt-20 pb-16">
           <div className="grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-6 items-center">
             <div>
-              <p className="rise inline-flex items-center gap-2 rounded-full border border-ink/10 bg-card/70 px-3.5 py-1.5 text-[13px] text-body" style={{ ["--d" as string]: "0ms" }}>
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Personal market intelligence
-              </p>
+              <a href="#teams" className="rise group inline-flex items-center gap-2 rounded-full border border-ink/10 bg-card/70 pl-4 pr-2 py-1.5 text-[13px] text-body transition-[border-color,color] duration-200 ease-neo hover:border-ink/30 hover:text-ink" style={{ ["--d" as string]: "0ms" }}>
+                Market intelligence for your company?
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-raised text-ink transition-[background-color,color] duration-200 ease-neo group-hover:bg-accent group-hover:text-page"><IconArrowRight size={13} /></span>
+              </a>
               <h1 className="rise mt-6 font-display font-normal text-[44px] sm:text-[72px] leading-[1.0] tracking-[-0.035em] text-ink" style={{ ["--d" as string]: "70ms" }}>
                 Everything you follow, in <em className="italic text-accent">one briefing</em> about you
               </h1>
@@ -335,7 +336,7 @@ export default function HomePage() {
       </section>
 
       {/* Company CTA */}
-      <section>
+      <section id="teams" className="scroll-mt-24">
         <div className="max-w-[1120px] mx-auto px-5 sm:px-6 pb-20 sm:pb-28">
           <Reveal>
             <div className="relative overflow-hidden rounded-panel border border-ink/[0.08] bg-card p-8 sm:p-14 grid lg:grid-cols-[7fr_5fr] gap-8 items-center">

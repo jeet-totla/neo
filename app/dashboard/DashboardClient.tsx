@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@/lib/supabase";
-import { Logo } from "@/components/Logo";
+import { Logo, LogoMark } from "@/components/Logo";
 import {
   IconNewspaper, IconMic, IconVideo, IconHistory, IconSettings, IconLogOut, IconRefresh,
   IconCopy, IconCheck, IconArrowRight, IconExternal, IconPlus, IconX, IconClock,
@@ -465,39 +466,33 @@ export function DashboardClient({ userEmail, profile: init, latestBriefing, past
     { key: "settings", label: "Settings", icon: IconSettings },
   ];
 
-  const navButton = (n: typeof NAV[number], compact = false) => (
-    <button key={n.key} onClick={() => setView(n.key)} aria-current={view === n.key ? "page" : undefined}
-      className={`flex items-center gap-2.5 rounded-control text-[14px] transition-[background-color,color] duration-150 ease-neo ${compact ? "h-9 px-3" : "h-9 px-3 w-full"} ${
-        view === n.key ? "bg-ink/[0.07] text-ink font-medium" : "text-body hover:bg-ink/[0.04] hover:text-ink"}`}>
-      <n.icon size={16} /> {n.label}
+  const navButton = (n: typeof NAV[number]) => (
+    <button key={n.key} onClick={() => setView(n.key)} aria-current={view === n.key ? "page" : undefined} aria-label={n.label}
+      className={`flex items-center justify-center gap-2 h-9 rounded-full text-[14px] px-3 sm:px-4 transition-[background-color,color] duration-200 ease-neo ${
+        view === n.key ? "bg-ink text-card font-medium" : "text-body hover:text-ink"}`}>
+      <n.icon size={16} /><span className="hidden sm:inline">{n.label}</span>
     </button>
   );
 
   return (
     <div className="min-h-screen bg-page">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex fixed left-3 top-3 bottom-3 w-[240px] glass rounded-panel flex-col p-3 z-20">
-        <div className="px-3 pt-3 pb-6"><Logo href="/dashboard" /></div>
-        <nav className="space-y-0.5" aria-label="Main">{NAV.map(n => navButton(n))}</nav>
-        <div className="mt-auto px-3 pt-4 border-t border-ink/[0.08]">
-          <p className="dateline truncate mb-2" title={userEmail}>{userEmail}</p>
-          <button onClick={signOut} className="flex items-center gap-2 text-[13px] text-body hover:text-ink transition-colors duration-150">
-            <IconLogOut /> Log out
-          </button>
+      {/* Top navigation */}
+      <header className="sticky top-3 z-30 px-3">
+        <div className="glass mx-auto max-w-[760px] h-14 rounded-full pl-4 pr-2 grid grid-cols-[auto_1fr_auto] items-center gap-2">
+          <Link href="/dashboard" aria-label="Neo home" className="flex items-center">
+            <span className="sm:hidden"><LogoMark size={28} /></span>
+            <span className="hidden sm:inline-flex"><Logo href="/dashboard" size={26} /></span>
+          </Link>
+          <nav className="justify-self-center flex items-center gap-1 rounded-full bg-raised/70 p-1" aria-label="Main">{NAV.map(n => navButton(n))}</nav>
+          <div className="flex items-center gap-1">
+            <span title={userEmail} className="hidden sm:grid h-9 w-9 place-items-center rounded-full bg-raised text-[13px] font-medium text-ink uppercase">{(userEmail[0] ?? "N")}</span>
+            <button onClick={signOut} aria-label="Log out" title="Log out" className="grid h-9 w-9 place-items-center rounded-full text-body hover:text-ink hover:bg-raised transition-colors duration-150"><IconLogOut size={16} /></button>
+          </div>
         </div>
-      </aside>
-
-      {/* Mobile header */}
-      <header className="md:hidden sticky top-0 z-20 glass rounded-none border-x-0 border-t-0">
-        <div className="h-14 px-5 flex items-center justify-between">
-          <Logo href="/dashboard" />
-          <button onClick={signOut} className="text-[13px] text-body hover:text-ink transition-colors duration-150">Log out</button>
-        </div>
-        <nav className="px-4 pb-2 flex gap-1" aria-label="Main">{NAV.map(n => navButton(n, true))}</nav>
       </header>
 
-      <main className="md:pl-[264px]">
-        <div ref={topRef} className="max-w-[760px] mx-auto px-5 sm:px-8 pt-8 md:pt-12 pb-24">
+      <main>
+        <div ref={topRef} className="max-w-[760px] mx-auto px-5 sm:px-8 pt-12 sm:pt-16 pb-24">
           {view === "today" && (
             <div className="rise">
               <h1 className="font-display text-[36px] sm:text-[44px] leading-[1.08] tracking-[-0.02em]">{fmtLong()}</h1>

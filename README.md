@@ -7,7 +7,7 @@
 **Personal market intelligence.**<br/>
 Everything you follow, in one morning briefing about you.
 
-[**Live app**](https://neo-flax-theta.vercel.app) · [How it works](#how-it-works) · [Run it yourself](#run-it-yourself) · [For companies](#want-one-for-your-company)
+[**Live app**](https://neo-flax-theta.vercel.app) · [How it works](#how-it-works) · [Run it yourself](#run-it-yourself) · [For companies](#for-companies)
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20Auth-3ecf8e?logo=supabase&logoColor=white) ![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)
 
@@ -30,6 +30,32 @@ The same story, for two different readers:
 >
 > **B2B founder, Lagos**
 > Cheaper rails help you, and your customers will notice the same news. Revisit your pricing before they ask, and see whether a local provider will match the offer.
+
+## Inside a briefing
+
+Every briefing follows the same shape, so it can be read in about five minutes:
+
+1. **A greeting that references your world**, not a generic good morning.
+2. **Stories grouped under your topics.** Each one starts with its source and age (for example *Axios · 3h ago*) and is marked as an article, a podcast episode or a video.
+3. **Three beats per story.** What happened in one sentence, why it matters to *you* in two or three, and what to do or watch for in one.
+4. **Today's signal.** One closing paragraph that ties the day's stories together.
+
+Neo is told to analyse rather than summarise, to skip anything that isn't relevant to your lens, and to never write about a story without naming where it came from.
+
+## Who it's for
+
+- **Investors and operators** who need to know what moved in their sector before the first meeting.
+- **Founders** tracking competitors, regulation and funding in their market.
+- **Students and early-career people** building market knowledge, with an expertise setting that explains terms instead of assuming them.
+- **Anyone with too many tabs** who would rather read one page that already knows what they care about.
+
+## How Neo chooses what you read
+
+1. **Collect.** Your publications, Substack newsletters, podcasts, YouTube channels, Reddit communities and X accounts, plus Google News, GDELT and Hacker News for your topics, all fetched in parallel for the last 24 hours.
+2. **De-duplicate.** Near-identical headlines are merged, preferring the version from a publication you chose. Anything that was in your previous briefing is removed.
+3. **Rank.** Stories from your own publications score highest, then matches to your topics, strong community signal and freshness.
+4. **Select.** At least one story per topic you follow, then the best of the rest up to the limit for the depth you picked.
+5. **Write.** The selected stories, your lens and your voice go to the AI model you connected, which writes the briefing. Your briefing is saved to your history and emailed to you.
 
 ## Features
 
@@ -173,8 +199,16 @@ supabase/schema.sql         Schema and row level security
 
 Near-black surfaces, warm off-white type and one ember accent. A display serif for large headlines only, a sans for the interface and a monospace for datelines. Line icons at one size, a 4px spacing grid, and light glass only where real content sits behind it. The logo is a sunrise over a horizon: a morning briefing. Principles adapted from [unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky (CC BY 4.0).
 
-## Want one for your company?
+## For companies
 
-I build custom market intelligence systems that track your sector, competitors and sources, and send your team a briefing on a schedule.
+Neo is built for one person today, but the problem is the same inside a company: everyone follows the same market through different tabs, and nobody has time to turn it into what it means for *their* job.
 
-**[Email me](mailto:jeettotla@gmail.com)** and tell me what you need to keep an eye on.
+The same engine works for a team:
+
+- **A shared watchlist.** One set of publications, competitors, regulators, podcasts and communities that matter to the business.
+- **A lens per role.** The same morning's news written once for the CEO, once for sales, once for product and once for the investor relations lead, each with its own implications and actions.
+- **Delivery where the team works.** Email on a schedule today, and the same briefing can go to Slack or a shared dashboard.
+- **Private context.** A system can also read what only your company has, such as internal updates, CRM notes or a customer list, so the briefing reflects your position and not only the public news.
+- **Your own AI account.** Briefings run on the company's own API key, so cost and data handling sit with you.
+
+What is in this repository is the individual product. Company systems are built to order on top of it. If you'd like one for your team, [email me](mailto:jeettotla@gmail.com?subject=Market%20intelligence%20system%20for%20our%20company) with the sector, the competitors and sources you track, and who should receive it.

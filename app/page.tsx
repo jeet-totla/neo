@@ -121,7 +121,7 @@ export default function HomePage() {
                 <span className="grid h-6 w-6 place-items-center rounded-full bg-raised text-ink transition-[background-color,color] duration-200 ease-neo group-hover:bg-accent group-hover:text-page"><IconArrowRight size={13} /></span>
               </a>
               <h1 className="rise mt-6 font-display font-normal text-[44px] sm:text-[72px] leading-[1.0] tracking-[-0.035em] text-ink" style={{ ["--d" as string]: "70ms" }}>
-                Everything you follow, in <em className="italic text-accent">one briefing</em> about you
+                Everything you follow, in <em className="italic text-accent">one briefing</em> about YOU
               </h1>
               <p className="rise mt-6 text-[18px] leading-[28px] text-body max-w-[520px]" style={{ ["--d" as string]: "140ms" }}>
                 Neo combines your news, newsletters, podcasts and feeds into a single morning briefing, then writes it through your own lens: your role, your market and your goals.
